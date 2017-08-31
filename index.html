@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dynamic Lights - A-Frame</title>
+    <meta name="description" content="Dynamic Lights - A-Frame">
+    <script src="https://aframe.io/releases/0.6.1/aframe.min.js"></script>
+    <script src="../../../dist/aframe-master.js"></script>
+    <script src="https://unpkg.com/aframe-animation-component@3.2.5/dist/aframe-animation-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-randomizer-components@3.0.2/dist/aframe-randomizer-components.min.js"></script>
+    <script src="https://unpkg.com/aframe-entity-generator-component@3.0.1/dist/aframe-entity-generator-component.min.js"></script>
+    <script>
+      AFRAME.registerComponent('random-material', {
+        init: function () {
+          this.el.setAttribute('material', {
+            color: this.getRandomColor(),
+            metalness: Math.random(),
+            roughness: Math.random()
+          });
+        },
+        getRandomColor: function () {
+          var randomColor1 = "#" + Math.floor(Math.random()*16777215).toString(16),
+              randomColor2 = "#" + Math.floor(Math.random()*16777215).toString(16);
+       return 'radial-gradient(at top left, '+randomColor1+', '+randomColor2+')'
+        }
+      });
+      AFRAME.registerComponent('random-tetra', {
+        init: function () {
+          this.el.setAttribute('geometry', {
+            primitive: 'octahedron',
+            radius: Math.random() * 10,
+             
+          });
+        }
+      });
+        AFRAME.registerComponent('random-box', {
+        init: function () {
+          this.el.setAttribute('geometry', {
+            primitive: 'box',
+            width: Math.random() * 15,
+            height: Math.random() *10
+             
+          });
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene>
+      <a-assets>
+        <a-mixin id="light"
+                 geometry="primitive: sphere; radius: 1.5"
+                 material="color: #d44313; shader: flat"
+                 light="color: #d44313; distance: 120; intensity: 2; type: point"></a-mixin>
+        <a-mixin id="atetra"
+                 random-tetra
+                 random-material
+                 random-position="min: -60 -60 -80; max: 60 60 40"></a-mixin>
+        <a-mixin id="abox"
+                 random-box
+                 random-material
+                 random-position="min: -60 -60 -80; max: 60 60 40"></a-mixin>
+      </a-assets>
+
+      <!-- Use entity-generator component to generate 120 entities with the torusKnot mixin. -->
+      <a-entity entity-generator="mixin: atetra; num: 150"></a-entity>
+      <!-- Skysphere. -->
+      <a-sky color="#111"></a-sky>
+
+      <!-- Lights. -->
+      <a-entity animation="property: rotation; to: 0 0 360; dur: 4000; easing: linear; loop: true">
+        <a-entity mixin="light" position="30 0 0"></a-entity>
+      </a-entity>
+
+      <a-entity animation="property: rotation; to: 360 0 0; dur: 4000; easing: linear; loop: true">
+        <a-entity mixin="light" position="0 0 40"></a-entity>
+      </a-entity>
+    <a-entity camera="active:false;userHeight:1.6" look-controls="" position="4.335 5.233 19.428" rotation="-10.313 4.125 0"></a-entity>
+    </a-scene>
+  </body>
+</html>
